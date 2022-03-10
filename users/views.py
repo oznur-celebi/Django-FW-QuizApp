@@ -1,10 +1,8 @@
-from rest_framework.generics import CreateAPIView
-from django.contrib.auth.models import Userfrom
 
 from rest_framework.generics import CreateAPIView
 from django.contrib.auth.models import User
 from .serializers import RegisterSerializer
-
+from rest_framework.response import Response
 
 #Serializeri olusturdduk simdi views i yaziyoruz
 
@@ -12,4 +10,12 @@ class RegisterAPI(CreateAPIView):
     queryset =User.objects.all()
     serializer_class =RegisterSerializer
 
-# Create your views here.
+
+    def post(self, request, *args, **kwargs):
+        serializer = RegisterSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response (
+            {"message" : "user created succesfully"}
+        )
+
