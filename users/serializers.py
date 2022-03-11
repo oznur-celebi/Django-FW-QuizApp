@@ -1,9 +1,9 @@
 
-from tkinter.ttk import Style
-from click import style
 from rest_framework import serializers, validators
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
+
+from dj_rest_auth.serializers import TokenSerializer
 
 class RegisterSerializer(serializers.ModelSerializer):
     #Email zorunlu olsun diye, normal user modelinde burasi zorunlu degil, suan overwrite yapiyoruz.
@@ -53,7 +53,15 @@ class RegisterSerializer(serializers.ModelSerializer):
             )
         return data
 
+class UserTokenSerializer(serializers.ModelSerializer):
+     class Meta:
+         model =User
+         fields =("id", "first_name", "last_name", "email")
 
+class CustomTokenSerializer(TokenSerializer):
+    user =UserTokenSerializer(read_only =True)
+    class Meta(TokenSerializer):
+        fileds=("key", "user")
 
 
 
